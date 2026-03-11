@@ -1,7 +1,7 @@
 ---
 title: ToneForge AI
 emoji: ⚡
-colorFrom: indigo
+colorFrom: red
 colorTo: slate
 sdk: docker
 pinned: false
