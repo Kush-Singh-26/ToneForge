@@ -47,11 +47,14 @@ app.add_middleware(
 )
 
 
-@app.get("/")
-async def root():
-    return {
-        "message": "ToneForge AI Backend is running. Access /docs for API documentation."
-    }
+# Mount static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+@app.get("/", response_class=HTMLResponse)
+async def get_index():
+    with open("index.html", "r", encoding="utf-8") as f:
+        return f.read()
 
 
 # =============================================================================

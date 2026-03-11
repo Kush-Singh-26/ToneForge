@@ -1,4 +1,4 @@
-const API_BASE = "";
+const API_BASE = window.location.origin.includes('hf.space') ? '' : 'https://kush26-toneforge.hf.space';
 
 document.addEventListener('DOMContentLoaded', () => {
     switchTab('formalize');
