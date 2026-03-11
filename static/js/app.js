@@ -21,6 +21,17 @@ function switchTab(tabId) {
         targetContent.classList.remove('hidden');
     }
 
+    // Toggle corresponding output container
+    document.querySelectorAll('.task-output').forEach(el => el.classList.add('hidden'));
+    const targetOutput = document.getElementById(`output-${tabId}`);
+    if (targetOutput) {
+        targetOutput.classList.remove('hidden');
+        // Re-calculate heights for hidden-then-visible textareas
+        setTimeout(() => {
+            targetOutput.querySelectorAll('textarea[oninput="autoResize(this)"]').forEach(ta => autoResize(ta));
+        }, 50);
+    }
+
     document.querySelectorAll('.nav-link').forEach(el => {
         el.classList.remove('active');
     });
@@ -259,7 +270,7 @@ async function submitForm(type) {
     let endpoint = "";
     let payload = {};
     
-    const outputArea = document.getElementById('output-area');
+    const outputArea = document.getElementById('output-' + type);
     outputArea.innerHTML = `
         <div class="h-full flex flex-col items-center justify-center space-y-8 py-32 animate-fade-in">
             <div class="custom-spinner !w-12 !h-12"></div>
