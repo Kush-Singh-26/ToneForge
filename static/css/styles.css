@@ -1,0 +1,156 @@
+/* Custom Scrollbar - Zen & Minimalist */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #27272a;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #3f3f46;
+}
+
+/* Base Overrides */
+html {
+    color-scheme: dark;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Navigation Link States */
+.nav-link {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #64748b;
+}
+
+.dark .nav-link {
+    color: #a1a1aa;
+}
+
+.nav-link:hover {
+    color: #0f172a;
+    background-color: #f1f5f9;
+}
+
+.dark .nav-link:hover {
+    color: #ffffff;
+    background-color: #18181b;
+}
+
+.nav-link.active {
+    color: #0f172a;
+    background-color: #f1f5f9;
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+}
+
+.dark .nav-link.active {
+    color: #ffffff;
+    background-color: #18181b;
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.5);
+}
+
+.nav-link.active i {
+    color: #6366f1;
+}
+
+/* Output Area Customization */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Animations */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Spinner - Professional & Discrete */
+.custom-spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba(99, 102, 241, 0.1);
+    border-top: 2px solid #6366f1;
+    border-radius: 50%;
+    animation: spin 0.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Output Cards - Dark Zen Style */
+.output-card {
+    background: #121214;
+    border: 1px solid #1e1e20;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.output-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5);
+    border-color: #27272a;
+}
+
+/* Typography Refinements */
+h1, h2, h3, h4 {
+    letter-spacing: -0.02em;
+}
+
+textarea::placeholder {
+    color: #3f3f46;
+}
+
+/* Select Styling Reset */
+select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2352525b' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+}
+
+/* Seamless Textarea Output */
+textarea.output-body {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    width: 100%;
+    resize: none;
+    padding: 0;
+}
+
+textarea.output-body:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}

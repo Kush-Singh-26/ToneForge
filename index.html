@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToneForge | Minimalist AI Intelligence</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="static/css/styles.css">
+    
+    <script>
+        // Theme initialization to prevent flash
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        zinc: {
+                            950: '#09090b',
+                            900: '#121214',
+                            800: '#1e1e20',
+                            700: '#2a2a2c',
+                        },
+                        accent: {
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.4s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 dark:bg-zinc-950 text-slate-600 dark:text-zinc-300 font-sans selection:bg-accent-500/30 selection:text-accent-500 transition-colors duration-500">
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-72 bg-white dark:bg-zinc-950 border-r border-slate-200 dark:border-zinc-900 flex flex-col transition-all duration-300 ease-in-out fixed inset-y-0 left-0 z-50 lg:relative lg:translate-x-0 -translate-x-full">
+            <div class="p-8">
+                <div class="flex items-center gap-3 mb-12">
+                    <div class="w-8 h-8 bg-accent-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <h1 class="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">ToneForge</h1>
+                </div>
+
+                <nav class="space-y-2">
+                    <button onclick="switchTab('formalize')" id="tab-formalize" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all group">
+                        <i data-lucide="feather" class="w-4 h-4"></i>
+                        <span>Formalize</span>
+                    </button>
+                    <button onclick="switchTab('reply')" id="tab-reply" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all group">
+                        <i data-lucide="message-square" class="w-4 h-4"></i>
+                        <span>Smart Reply</span>
+                    </button>
+                    <button onclick="switchTab('negotiate')" id="tab-negotiate" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all group">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        <span>Negotiation</span>
+                    </button>
+                    <button onclick="switchTab('legal')" id="tab-legal" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all group">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        <span>Legal Parser</span>
+                    </button>
+                </nav>
+            </div>
+
+            <div class="mt-auto p-8 space-y-4">
+                <!-- Theme Toggle -->
+                <button onclick="toggleTheme()" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 hover:border-accent-500/50 transition-all group">
+                    <div class="flex items-center gap-3">
+                        <div class="dark:hidden"><i data-lucide="sun" class="w-4 h-4 text-amber-500"></i></div>
+                        <div class="hidden dark:block"><i data-lucide="moon" class="w-4 h-4 text-accent-400"></i></div>
+                        <span class="text-xs font-medium text-slate-600 dark:text-zinc-400">Theme</span>
+                    </div>
+                    <div class="w-8 h-4 bg-slate-300 dark:bg-zinc-700 rounded-full relative transition-colors">
+                        <div class="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform duration-300 dark:translate-x-4"></div>
+                    </div>
+                </button>
+
+                <div class="p-4 bg-slate-100 dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-800 rounded-2xl">
+                    <div class="flex items-center gap-3 mb-1">
+                        <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                        <span class="text-xs font-medium text-slate-500 dark:text-zinc-400">System Core</span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 dark:text-zinc-500 uppercase tracking-widest">Active & Ready</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col min-w-0 bg-slate-50 dark:bg-zinc-950 transition-colors duration-500">
+            
+            <!-- Mobile Header -->
+            <header class="lg:hidden flex items-center justify-between p-6 border-b border-slate-200 dark:border-zinc-900 bg-white dark:bg-zinc-950">
+                <h1 class="text-lg font-semibold text-slate-900 dark:text-white">ToneForge</h1>
+                <button id="mobile-menu-btn" class="p-2 text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </header>
+
+            <div class="flex-1 overflow-y-auto p-6 lg:p-12">
+                <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    
+                    <!-- Left Column: Inputs -->
+                    <div class="space-y-8">
+                        
+                        <div id="formalize" class="tab-content hidden animate-slide-up">
+                            <header class="mb-8">
+                                <h2 class="text-3xl font-semibold text-slate-900 dark:text-white mb-2">Formalize</h2>
+                                <p class="text-slate-500 dark:text-zinc-500">Elevate your casual drafts into professional communication.</p>
+                            </header>
+                            
+                            <div class="space-y-6">
+                                <div class="group">
+                                    <label class="block text-xs font-medium text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-3 group-focus-within:text-accent-500 transition-colors">Draft Content</label>
+                                    <textarea id="form-raw" rows="6" class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-5 text-sm text-slate-700 dark:text-zinc-200 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all resize-none shadow-sm dark:shadow-none" placeholder="What's on your mind?"></textarea>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Context</label>
+                                        <select id="form-cat" class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 text-sm text-slate-600 dark:text-zinc-300 focus:border-accent-500 outline-none transition-all appearance-none cursor-pointer shadow-sm dark:shadow-none">
+                                            <option value="business">Business</option>
+                                            <option value="corporate">Corporate</option>
+                                            <option value="academic">Academic</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Language</label>
+                                        <input type="text" id="form-lang" value="English" class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 text-sm text-slate-600 dark:text-zinc-300 focus:border-accent-500 outline-none transition-all shadow-sm dark:shadow-none">
+                                    </div>
+                                </div>
+                                <button onclick="submitForm('formalize')" id="btn-formalize" class="w-full bg-slate-900 dark:bg-white text-white dark:text-zinc-950 py-4 rounded-2xl hover:opacity-90 transition-all font-semibold text-sm active:scale-[0.98] shadow-lg shadow-slate-900/10 dark:shadow-none">
+                                    Forge Document
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="reply" class="tab-content hidden animate-slide-up">
+                            <header class="mb-8">
+                                <h2 class="text-3xl font-semibold text-slate-900 dark:text-white mb-2">Smart Reply</h2>
+                                <p class="text-slate-500 dark:text-zinc-500">Generate intelligent, context-aware responses.</p>
+                            </header>
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Incoming Message</label>
+                                    <textarea id="reply-raw" rows="8" class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-5 text-sm text-slate-700 dark:text-zinc-200 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all resize-none shadow-sm dark:shadow-none" placeholder="Paste the message here..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Tone Profile</label>
+                                    <select id="reply-cat" class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 text-sm text-slate-600 dark:text-zinc-300 focus:border-accent-500 outline-none appearance-none cursor-pointer shadow-sm dark:shadow-none">
+                                        <option value="business">Business</option>
+                                        <option value="corporate">Corporate</option>
+                                        <option value="academic">Academic</option>
+                                    </select>
+                                </div>
+                                <button onclick="submitForm('reply')" id="btn-reply" class="w-full bg-slate-900 dark:bg-white text-white dark:text-zinc-950 py-4 rounded-2xl hover:opacity-90 transition-all font-semibold text-sm active:scale-[0.98] shadow-lg shadow-slate-900/10 dark:shadow-none">
+                                    Generate Response
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="negotiate" class="tab-content hidden animate-slide-up">
+                            <header class="mb-8">
+                                <h2 class="text-3xl font-semibold text-slate-900 dark:text-white mb-2">Negotiation</h2>
+                                <p class="text-slate-500 dark:text-zinc-500">Strategic simulation for complex discussions.</p>
+                            </header>
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Topic</label>
+                                    <input type="text" id="neg-topic" class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 text-sm text-slate-700 dark:text-zinc-200 focus:border-accent-500 outline-none transition-all shadow-sm dark:shadow-none" placeholder="e.g. Budget Alignment">
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-xs font-medium text-accent-500 uppercase tracking-widest mb-3">Our Position</label>
+                                        <textarea id="neg-our" rows="4" class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 text-sm text-slate-700 dark:text-zinc-200 focus:border-accent-500 outline-none transition-all resize-none shadow-sm dark:shadow-none" placeholder="What are our goals?"></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Their Position</label>
+                                        <textarea id="neg-their" rows="4" class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 text-sm text-slate-700 dark:text-zinc-200 focus:border-accent-500 outline-none transition-all resize-none shadow-sm dark:shadow-none" placeholder="What is their current stance?"></textarea>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Context</label>
+                                        <select id="neg-cat" class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 text-sm text-slate-600 dark:text-zinc-300 focus:border-accent-500 outline-none appearance-none cursor-pointer shadow-sm dark:shadow-none">
+                                            <option value="business">Business</option>
+                                            <option value="corporate">Corporate</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Depth</label>
+                                        <input type="number" id="neg-rounds" value="3" min="1" max="6" class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 text-sm text-slate-600 dark:text-zinc-300 focus:border-accent-500 outline-none transition-all shadow-sm dark:shadow-none">
+                                    </div>
+                                </div>
+                                <button onclick="submitForm('negotiate')" id="btn-negotiate" class="w-full bg-slate-900 dark:bg-white text-white dark:text-zinc-950 py-4 rounded-2xl hover:opacity-90 transition-all font-semibold text-sm active:scale-[0.98] shadow-lg shadow-slate-900/10 dark:shadow-none">
+                                    Simulate Discussion
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="legal" class="tab-content hidden animate-slide-up">
+                            <header class="mb-8">
+                                <h2 class="text-3xl font-semibold text-slate-900 dark:text-white mb-2">Legal Parser</h2>
+                                <p class="text-slate-500 dark:text-zinc-500">Deconstruct risks and obligations in legal text.</p>
+                            </header>
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Legal Text</label>
+                                    <textarea id="legal-raw" rows="12" class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-5 text-sm text-slate-700 dark:text-zinc-200 focus:border-accent-500 outline-none transition-all resize-none shadow-sm dark:shadow-none" placeholder="Paste the contract or clause..."></textarea>
+                                </div>
+                                <button onclick="submitForm('legal')" id="btn-legal" class="w-full bg-slate-900 dark:bg-white text-white dark:text-zinc-950 py-4 rounded-2xl hover:opacity-90 transition-all font-semibold text-sm active:scale-[0.98] shadow-lg shadow-slate-900/10 dark:shadow-none">
+                                    Analyze Intelligence
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Column: Output -->
+                    <div class="relative">
+                        <div class="sticky top-6 lg:top-12 h-fit min-h-[500px] flex flex-col bg-white dark:bg-zinc-900/40 border border-slate-200 dark:border-zinc-800/60 rounded-[2.5rem] overflow-hidden backdrop-blur-sm shadow-xl shadow-slate-200/50 dark:shadow-none transition-colors duration-500">
+                            <div class="p-6 border-b border-slate-100 dark:border-zinc-800/60 flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-accent-500 rounded-full"></span>
+                                    <h3 class="text-xs font-semibold text-slate-400 dark:text-zinc-400 uppercase tracking-widest">Intelligence Output</h3>
+                                </div>
+                                <div class="flex gap-1.5">
+                                    <div class="w-2.5 h-2.5 rounded-full bg-slate-200 dark:bg-zinc-800"></div>
+                                    <div class="w-2.5 h-2.5 rounded-full bg-slate-200 dark:bg-zinc-800"></div>
+                                    <div class="w-2.5 h-2.5 rounded-full bg-slate-200 dark:bg-zinc-800"></div>
+                                </div>
+                            </div>
+                            
+                            <div id="output-area" class="flex-1 p-8 overflow-y-auto custom-scrollbar">
+                                <div class="h-full flex flex-col items-center justify-center text-slate-300 dark:text-zinc-600 text-center py-20 opacity-40">
+                                    <i data-lucide="sparkles" class="w-12 h-12 mb-4"></i>
+                                    <p class="text-sm italic font-medium">Awaiting input for synthesis...</p>
+                                </div>
+                            </div>
+
+                            <div class="p-4 bg-slate-50 dark:bg-zinc-900/60 border-t border-slate-100 dark:border-zinc-800/60 text-center">
+                                <p class="text-[10px] text-slate-400 dark:text-zinc-500 uppercase tracking-[0.3em]">ToneForge v2.0 // Quantum Core</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="static/js/app.js"></script>
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Mobile Sidebar Toggle
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+
+        document.addEventListener('mousedown', (e) => {
+            if (window.innerWidth < 1024 && !sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+    </script>
+</body>
+</html>
