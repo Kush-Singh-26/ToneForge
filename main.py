@@ -61,40 +61,20 @@ async def get_index():
 # =============================================================================
 
 # — Core (original) —
-analyser_llm = ChatGroq(
-    model="openai/gpt-oss-120b", temperature=0.0, groq_api_key=GROQ_API_KEY
-)
-business_llm = ChatGroq(
-    model="openai/gpt-oss-120b", temperature=0.4, groq_api_key=GROQ_API_KEY
-)
-academic_llm = ChatGroq(
-    model="openai/gpt-oss-120b", temperature=0.4, groq_api_key=GROQ_API_KEY
-)
-corporate_llm = ChatGroq(
-    model="openai/gpt-oss-120b", temperature=0.4, groq_api_key=GROQ_API_KEY
-)
-translator_llm = ChatGroq(
-    model="openai/gpt-oss-120b", temperature=0.2, groq_api_key=GROQ_API_KEY
-)
-reply_llm = ChatGroq(
-    model="openai/gpt-oss-120b", temperature=0.5, groq_api_key=GROQ_API_KEY
-)
+analyser_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
+business_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.4)
+academic_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.4)
+corporate_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.4)
+translator_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.2)
+reply_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.5)
 
 # — PERSON A: Multi-Agent Negotiator —
-proposer_llm = ChatGroq(
-    model="openai/gpt-oss-120b", temperature=0.5, groq_api_key=GROQ_API_KEY
-)
-responder_llm = ChatGroq(
-    model="openai/gpt-oss-120b", temperature=0.6, groq_api_key=GROQ_API_KEY
-)
-evaluator_llm = ChatGroq(
-    model="openai/gpt-oss-120b", temperature=0.0, groq_api_key=GROQ_API_KEY
-)
+proposer_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.5)
+responder_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.6)
+evaluator_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
 
 # — PERSON B: Legal Parser —
-legal_llm = ChatGroq(
-    model="openai/gpt-oss-120b", temperature=0.0, groq_api_key=GROQ_API_KEY
-)
+legal_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
 
 
 # =============================================================================
@@ -484,13 +464,15 @@ async def _node_analyze(state: EmailState) -> EmailState:
 
 def _route_after_analysis(state: EmailState) -> str:
     a = state["analysis"]
-    if a.already_formal and a.detected_category == state["category"]:
+    if a and a.already_formal and a.detected_category == state["category"]:
         return "return_direct"
     return state["category"]
 
 
 def _node_return_direct(state: EmailState) -> EmailState:
     a = state["analysis"]
+    if not a:
+        return state
     state["final_email"] = StructuredEmail(
         subject="(Original Subject Preserved)",
         sender="(Original Sender)",
@@ -502,40 +484,45 @@ def _node_return_direct(state: EmailState) -> EmailState:
 
 
 async def _node_business(state: EmailState) -> EmailState:
+    a = state["analysis"]
+    if not a:
+        return state
     chain = (
         _build_email_prompt("Business", BUSINESS_TEMPLATE) | business_llm | email_parser
     )
-    state["final_email"] = await chain.ainvoke(
-        {"main_points": state["analysis"].main_points}
-    )
+    state["final_email"] = await chain.ainvoke({"main_points": a.main_points})
     return state
 
 
 async def _node_academic(state: EmailState) -> EmailState:
+    a = state["analysis"]
+    if not a:
+        return state
     chain = (
         _build_email_prompt("Academic", ACADEMIC_TEMPLATE) | academic_llm | email_parser
     )
-    state["final_email"] = await chain.ainvoke(
-        {"main_points": state["analysis"].main_points}
-    )
+    state["final_email"] = await chain.ainvoke({"main_points": a.main_points})
     return state
 
 
 async def _node_corporate(state: EmailState) -> EmailState:
+    a = state["analysis"]
+    if not a:
+        return state
     chain = (
         _build_email_prompt("Corporate", CORPORATE_TEMPLATE)
         | corporate_llm
         | email_parser
     )
-    state["final_email"] = await chain.ainvoke(
-        {"main_points": state["analysis"].main_points}
-    )
+    state["final_email"] = await chain.ainvoke({"main_points": a.main_points})
     return state
 
 
 async def _node_translate(state: EmailState) -> EmailState:
-    target = (state.get("language") or "english").strip().lower()
     fe = state["final_email"]
+    if not fe:
+        return state
+    target = (state.get("language") or "english").strip().lower()
     if target == "english":
         state["translated_email"] = TranslatedEmail(
             **fe.model_dump(), language="English"
