@@ -23,12 +23,13 @@ router = APIRouter()
 # =============================================================================
 #  1. LLM INSTANCES
 # =============================================================================
-analyser_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
-business_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.4)
-academic_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.4)
-corporate_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.4)
-translator_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.2)
-reply_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.5)
+# Using specialized models for speed and quality
+analyser_llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0.0)
+business_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.4)
+academic_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.4)
+corporate_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.4)
+translator_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.2)
+reply_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.5)
 
 
 # =============================================================================

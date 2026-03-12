@@ -23,14 +23,17 @@ if not os.getenv("GROQ_API_KEY"):
 ---
 
 ## 2. LLM Configuration & Temperatures
-We use the `ChatGroq` wrapper for the `openai/gpt-oss-120b` model.
+We use specialized **Groq models** optimized for different stages of the pipeline.
 
 ```python
-analyser_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
-business_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.4)
+# Using specialized models for speed and quality
+analyser_llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0.0)
+business_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.4)
 ```
-- **Temperature 0.0:** Used for the `analyser`. It must be deterministic (always gives the same output for the same input) to correctly detect categories.
-- **Temperature 0.4:** Used for writing. It allows the model to vary its phrasing slightly for a more "human" feel while staying professional.
+- **Llama 3.1 8B (Instant):** Used for the `analyser`. It is incredibly fast and efficient for classification and extraction tasks.
+- **Llama 3.3 70B (Versatile):** Used for the generative writing and translation tasks. It has higher reasoning capabilities and handles multilingual nuance far better than smaller models.
+- **Temperature 0.0:** Used for the `analyser` to ensure deterministic classification.
+- **Temperature 0.4:** Used for writing to balance professional consistency with human-like phrasing.
 
 ---
 
@@ -80,3 +83,23 @@ async def formalize_email(request: EmailRequest):
 ```
 - **`ainvoke`:** Stands for "Asynchronous Invoke." It allows the server to handle multiple users simultaneously without waiting (blocking) for the LLM to finish.
 - **`model_dump()`:** Converts the Pydantic object into a JSON-friendly Python dictionary.
+
+---
+
+## 6. Available Tasks & Functional Logic
+
+### **A. Email Formalizer (Rewrite Task)**
+**Purpose:** Transforms informal, messy, or "brain-dump" notes into structured, professional emails.
+- **Analysis Node:** The system first identifies the "Main Points" (who is involved, what is requested, what is the deadline).
+- **Style Injection:** Depending on the category (Business/Academic/Corporate), the AI applies a rigid structural template.
+- **Edge Case Handling:** If the email is already formal, the AI recognizes this and preserves the original content to avoid over-processing.
+
+### **B. Smart Reply Generator**
+**Purpose:** Context-aware reply generation based on the thread's history.
+- **Context Awareness:** Instead of a generic "Thanks," the AI reads the incoming message and crafts a specific response addressing the points raised.
+- **Tone Matching:** Ensures the reply matches the professional category chosen by the user.
+
+### **C. Professional Translator**
+**Purpose:** High-fidelity translation that preserves professional nuance.
+- **Tone Preservation:** Unlike standard translators that might lose formality, this task specifically instructs the AI to maintain "Business Formal" or "Academic Respectful" tones in the target language.
+- **Entity Protection:** Proper nouns, company names, and technical terms are preserved as-is.

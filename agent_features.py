@@ -23,10 +23,11 @@ router = APIRouter()
 # =============================================================================
 #  1. LLM INSTANCES
 # =============================================================================
-proposer_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.5)
-responder_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.6)
-evaluator_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
-legal_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
+# Negotiation and Legal require high reasoning - using the 70B versatile model
+proposer_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.5)
+responder_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.6)
+evaluator_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.0)
+legal_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.0)
 
 
 # =============================================================================

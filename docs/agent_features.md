@@ -23,14 +23,16 @@ if not os.getenv("GROQ_API_KEY"):
 ---
 
 ## 2. Multi-Agent System Roles & Temperatures
-We use the `ChatGroq` wrapper for the `openai/gpt-oss-120b` model.
+We use the state-of-the-art **Llama 3.3 70B** model for these tasks due to the high reasoning requirements of negotiation and legal analysis.
 
 ```python
-proposer_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.5)
-responder_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.6)
-evaluator_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
-legal_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
+# Negotiation and Legal require high reasoning - using the 70B versatile model
+proposer_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.5)
+responder_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.6)
+evaluator_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.0)
+legal_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.0)
 ```
+- **Llama 3.3 70B (Versatile):** This model is the best-in-class for Groq's current stack, providing GPT-4 level reasoning which is essential for multi-agent logic.
 - **Proposer & Responder:** Higher temperatures (`0.5-0.6`) allow for dynamic negotiation and creative counter-offers.
 - **Evaluator & Legal:** Set to `0.0` for maximum precision. These agents MUST be objective and never "hallucinate" or vary their logic.
 
@@ -115,3 +117,19 @@ async def negotiate_email(request: NegotiationRequest):
 ```
 - **Asynchronous Execution:** Like the formalizer, this uses `ainvoke` so that long negotiation loops don't block the entire server.
 - **Summary Retrieval:** Notice the check: `result["evaluator_decision"].summary` extracts the final verdict from the referee agent.
+
+---
+
+## 6. Available Tasks & Functional Logic
+
+### **A. Multi-Agent Negotiation Simulation**
+**Purpose:** Helps users practice or simulate a difficult email negotiation before sending actual mail.
+- **Proposer Agent:** Acts as the user's advocate. It tries to achieve the user's "Our Position" using persuasive but professional language.
+- **Responder Agent:** Simulates the other party. It acts realistically—rejecting unfair offers and suggesting compromises.
+- **Evaluator Agent:** Acts as the "Referee." It reads the back-and-forth history and identifies when an agreement has been reached, providing a final summary of the agreed terms.
+
+### **B. Legal & Contract Parser**
+**Purpose:** Simplifies "legalese" and identifies hidden risks in contracts.
+- **Risk Scorecard:** Identifies "Risk Flags" like *indemnification*, *irrevocability*, or *sole discretion* that might be dangerous for a user.
+- **Commitment Extraction:** Clearly lists all **Obligations** (what you MUST do) and **Deadlines** (WHEN you must do it).
+- **Plain Summary:** Translates complex legal clauses into 2-3 simple English sentences so anyone can understand what they are signing.
