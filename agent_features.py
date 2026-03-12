@@ -1,4 +1,3 @@
-import json
 import os
 from typing import Literal, Optional
 from dotenv import load_dotenv
@@ -23,11 +22,11 @@ router = APIRouter()
 # =============================================================================
 #  1. LLM INSTANCES
 # =============================================================================
-# Negotiation and Legal require high reasoning - using the 70B versatile model
-proposer_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.5)
-responder_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.6)
-evaluator_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.0)
-legal_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.0)
+# Using openai/gpt-oss-120b for all tasks - high reasoning for negotiation and legal
+proposer_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.5)
+responder_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.6)
+evaluator_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
+legal_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
 
 
 # =============================================================================

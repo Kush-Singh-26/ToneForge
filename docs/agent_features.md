@@ -23,16 +23,16 @@ if not os.getenv("GROQ_API_KEY"):
 ---
 
 ## 2. Multi-Agent System Roles & Temperatures
-We use the state-of-the-art **Llama 3.3 70B** model for these tasks due to the high reasoning requirements of negotiation and legal analysis.
+We use the state-of-the-art **OpenAI GPT-OSS 120B** model for these tasks due to the high reasoning requirements of negotiation and legal analysis.
 
 ```python
-# Negotiation and Legal require high reasoning - using the 70B versatile model
-proposer_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.5)
-responder_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.6)
-evaluator_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.0)
-legal_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.0)
+# Using openai/gpt-oss-120b for all tasks - high reasoning for negotiation and legal
+proposer_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.5)
+responder_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.6)
+evaluator_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
+legal_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
 ```
-- **Llama 3.3 70B (Versatile):** This model is the best-in-class for Groq's current stack, providing GPT-4 level reasoning which is essential for multi-agent logic.
+- **OpenAI GPT-OSS 120B:** This model provides exceptional reasoning capabilities essential for multi-agent negotiation and legal analysis.
 - **Proposer & Responder:** Higher temperatures (`0.5-0.6`) allow for dynamic negotiation and creative counter-offers.
 - **Evaluator & Legal:** Set to `0.0` for maximum precision. These agents MUST be objective and never "hallucinate" or vary their logic.
 

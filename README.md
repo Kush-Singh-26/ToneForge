@@ -42,7 +42,7 @@ Deconstruct complex legal text or contract emails into structured intelligence.
 
 - **Backend**: [FastAPI](https://fastapi.tiangolo.com/) (Python)
 - **Orchestration**: [LangChain](https://www.langchain.com/) & [LangGraph](https://python.langchain.com/docs/langgraph)
- - **LLM Infrastructure**: [Groq](https://groq.com/) (GPT 120B OSS)
+ - **LLM Infrastructure**: [Groq](https://groq.com/) (OpenAI GPT-OSS 120B)
 - **Frontend**: HTML5, [Tailwind CSS](https://tailwindcss.com/), [Lucide Icons](https://lucide.dev/)
 - **State Management**: Pydantic & TypedDict
 

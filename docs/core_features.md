@@ -23,17 +23,20 @@ if not os.getenv("GROQ_API_KEY"):
 ---
 
 ## 2. LLM Configuration & Temperatures
-We use specialized **Groq models** optimized for different stages of the pipeline.
+We use **OpenAI GPT-OSS 120B** for all tasks through Groq.
 
 ```python
-# Using specialized models for speed and quality
-analyser_llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0.0)
-business_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.4)
+# Using openai/gpt-oss-120b for all tasks - high reasoning and quality
+analyser_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
+business_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.4)
+academic_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.4)
+corporate_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.4)
+translator_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.2)
+reply_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.5)
 ```
-- **Llama 3.1 8B (Instant):** Used for the `analyser`. It is incredibly fast and efficient for classification and extraction tasks.
-- **Llama 3.3 70B (Versatile):** Used for the generative writing and translation tasks. It has higher reasoning capabilities and handles multilingual nuance far better than smaller models.
+- **OpenAI GPT-OSS 120B:** Used for all tasks including analysis, writing, and translation. Provides high-quality output across all use cases.
 - **Temperature 0.0:** Used for the `analyser` to ensure deterministic classification.
-- **Temperature 0.4:** Used for writing to balance professional consistency with human-like phrasing.
+- **Temperature 0.2-0.5:** Used for writing and translation to balance professional consistency with human-like phrasing.
 
 ---
 
