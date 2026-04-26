@@ -10,20 +10,12 @@ from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel, Field
 from typing import TypedDict
 
-# =============================================================================
-#  0. ENVIRONMENT CONFIGURATION
-# =============================================================================
 load_dotenv()
 if not os.getenv("GROQ_API_KEY"):
-    # This guard prevents the app from crashing with cryptic errors later
     raise ValueError("GROQ_API_KEY is missing. Ensure it is defined in your .env file.")
 
 router = APIRouter()
 
-# =============================================================================
-#  1. LLM INSTANCES
-# =============================================================================
-# Using openai/gpt-oss-120b for all tasks - high reasoning and quality
 analyser_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
 business_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.4)
 academic_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.4)
@@ -31,10 +23,6 @@ corporate_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.4)
 translator_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.2)
 reply_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.5)
 
-
-# =============================================================================
-#  2. PYDANTIC MODELS
-# =============================================================================
 class AnalysisOutput(BaseModel):
     already_formal: bool = Field(description="True if the email is already formal")
     detected_category: Literal["business", "academic", "corporate", "unknown"]
@@ -78,10 +66,6 @@ class ReplyRequest(BaseModel):
     original_email: str = Field(description="The incoming email you want to reply to.")
     category: Literal["business", "academic", "corporate"]
 
-
-# =============================================================================
-#  3. STATE TYPEDDICTS
-# =============================================================================
 class EmailState(TypedDict):
     raw_email: str
     category: Literal["business", "academic", "corporate"]
@@ -96,27 +80,15 @@ class ReplyState(TypedDict):
     category: Literal["business", "academic", "corporate"]
     smart_reply: Optional[SmartReplyOutput]
 
-
-# =============================================================================
-#  4. PARSERS
-# =============================================================================
 analysis_parser = PydanticOutputParser(pydantic_object=AnalysisOutput)
 email_parser = PydanticOutputParser(pydantic_object=StructuredEmail)
 translated_parser = PydanticOutputParser(pydantic_object=TranslatedEmail)
 reply_parser = PydanticOutputParser(pydantic_object=SmartReplyOutput)
 
-
-# =============================================================================
-#  5. SHARED HELPERS
-# =============================================================================
 def _escape_fmt(parser: PydanticOutputParser) -> str:
     """Escape curly braces in format instructions for f-string safety."""
     return parser.get_format_instructions().replace("{", "{{").replace("}", "}}")
 
-
-# =============================================================================
-#  6. EMAIL STYLE TEMPLATES
-# =============================================================================
 BUSINESS_TEMPLATE = """
 Business Email Structure Guidelines:
 - Subject: Clear, concise, action-oriented.
@@ -159,10 +131,6 @@ TEMPLATE_MAP = {
     "corporate": CORPORATE_TEMPLATE,
 }
 
-
-# =============================================================================
-#  7. PROMPT BUILDERS
-# =============================================================================
 def _build_analysis_prompt() -> ChatPromptTemplate:
     fmt = _escape_fmt(analysis_parser)
     return ChatPromptTemplate.from_messages(
@@ -236,10 +204,6 @@ Subject must start with "Re: ". Return ONLY JSON.\n{fmt}
         ]
     )
 
-
-# =============================================================================
-#  8. LANGGRAPH
-# =============================================================================
 analysis_prompt = _build_analysis_prompt()
 
 
@@ -368,10 +332,6 @@ _rw.add_edge(START, "reply")
 _rw.add_edge("reply", END)
 reply_graph = _rw.compile()
 
-
-# =============================================================================
-#  9. ENDPOINTS
-# =============================================================================
 @router.post("/formalize_email")
 async def formalize_email(request: EmailRequest):
     """

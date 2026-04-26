@@ -9,29 +9,18 @@ from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel, Field
 from typing import TypedDict
 
-# =============================================================================
-#  0. ENVIRONMENT CONFIGURATION
-# =============================================================================
 load_dotenv()
 if not os.getenv("GROQ_API_KEY"):
-    # This guard prevents the app from crashing with cryptic errors later
     raise ValueError("GROQ_API_KEY is missing. Ensure it is defined in your .env file.")
 
 router = APIRouter()
 
-# =============================================================================
-#  1. LLM INSTANCES
-# =============================================================================
-# Using openai/gpt-oss-120b for all tasks - high reasoning for negotiation and legal
 proposer_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.5)
 responder_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.6)
 evaluator_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
 legal_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.0)
 
 
-# =============================================================================
-#  2. PYDANTIC MODELS
-# =============================================================================
 class NegotiationEmail(BaseModel):
     """One email turn in the negotiation thread."""
 
@@ -82,10 +71,6 @@ class LegalParseRequest(BaseModel):
         description="Full text of the legal/contract email to analyse."
     )
 
-
-# =============================================================================
-#  3. STATE TYPEDDICTS
-# =============================================================================
 class NegotiationState(TypedDict):
     topic: str
     our_position: str
@@ -102,26 +87,14 @@ class LegalParseState(TypedDict):
     raw_email: str
     parse_result: Optional[LegalParseOutput]
 
-
-# =============================================================================
-#  4. PARSERS
-# =============================================================================
 negotiation_parser = PydanticOutputParser(pydantic_object=NegotiationEmail)
 evaluator_parser = PydanticOutputParser(pydantic_object=EvaluatorDecision)
 legal_parser = PydanticOutputParser(pydantic_object=LegalParseOutput)
 
-
-# =============================================================================
-#  5. SHARED HELPERS
-# =============================================================================
 def _escape_fmt(parser: PydanticOutputParser) -> str:
     """Escape curly braces in format instructions for f-string safety."""
     return parser.get_format_instructions().replace("{", "{{").replace("}", "}}")
 
-
-# =============================================================================
-#  6. PROMPT BUILDERS
-# =============================================================================
 def _build_proposer_prompt() -> ChatPromptTemplate:
     fmt = _escape_fmt(negotiation_parser)
     return ChatPromptTemplate.from_messages(
@@ -230,9 +203,6 @@ Return ONLY JSON.\n{fmt}
     )
 
 
-# =============================================================================
-#  7. NEGOTIATION LANGGRAPH
-# =============================================================================
 def _history_text(history: list) -> str:
     if not history:
         return "(No messages yet)"
@@ -320,9 +290,6 @@ _nw.add_conditional_edges(
 neg_graph = _nw.compile()
 
 
-# =============================================================================
-#  8. LEGAL PARSER LANGGRAPH
-# =============================================================================
 async def _node_legal_parse(state: LegalParseState) -> LegalParseState:
     chain = _build_legal_prompt() | legal_llm | legal_parser
     state["parse_result"] = await chain.ainvoke({"raw_email": state["raw_email"]})
@@ -335,10 +302,6 @@ _lw.add_edge(START, "parse")
 _lw.add_edge("parse", END)
 legal_graph = _lw.compile()
 
-
-# =============================================================================
-#  9. ENDPOINTS
-# =============================================================================
 @router.post("/negotiate_email")
 async def negotiate_email(request: NegotiationRequest):
     """
